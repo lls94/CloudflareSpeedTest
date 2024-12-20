@@ -10,7 +10,7 @@ REM ./CloudflareST.exe -tll 40 -tl 300 -p 8 -httping -cfcolo SIN -o /results/SIN
 chcp 65001
 setlocal
 
-set params=-tll 40 -tl 300 -p 0 -httping
+set params=-tll 40 -tl 500 -p 0 -httping
 set outputDir=results
 
 REM 创建结果目录
