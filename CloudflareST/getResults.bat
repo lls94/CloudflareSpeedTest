@@ -30,6 +30,6 @@ REM 提交代码到 GitHub
 cd /d %~dp0
 git add %outputDir%
 git commit -m "自动更新测试结果"
-git push origin main
+git push origin master
 
 endlocal
