@@ -7,8 +7,8 @@ import (
 	"net"
 	"os"
 	"strconv"
-	"time"
 	"strings"
+	"time"
 )
 
 const (
@@ -24,7 +24,7 @@ var (
 	InputMaxLossRate = maxLossRate
 	Output           = defaultOutput
 	PrintNum         = 10
-	coloLimit		 = 20
+	coloLimit        = 16
 )
 
 // 是否打印测试结果
@@ -42,7 +42,7 @@ type PingData struct {
 	Sended   int
 	Received int
 	Delay    time.Duration
-	Colo	 string
+	Colo     string
 }
 
 type CloudflareIPData struct {
@@ -123,12 +123,12 @@ func ExportCsv(data []CloudflareIPData) {
 }
 
 func convertToStringOnlyIp(data []CloudflareIPData) [][]string {
-    result := make([][]string, 0)
-    for _, v := range data {
-        // 拼接 IP 和 Colo 字段
-        result = append(result, []string{v.IP.String() + "#💻" + v.Colo})
-    }
-    return result
+	result := make([][]string, 0)
+	for _, v := range data {
+		// 拼接 IP 和 Colo 字段
+		result = append(result, []string{v.IP.String() + "#💻" + v.Colo})
+	}
+	return result
 }
 
 func convertToString(data []CloudflareIPData) [][]string {

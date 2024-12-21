@@ -131,6 +131,12 @@ func (p *Ping) getColo(b string) string {
 	if HttpingCFColomap == nil {
 		return out
 	}
+
+	// 检查 HttpingCFColomap 中是否包含 '*'
+	if _, exists := HttpingCFColomap.Load("*"); exists {
+		return out
+	}
+
 	// 匹配 机场三字码 是否为指定的地区
 	_, ok := HttpingCFColomap.Load(out)
 	if ok {
