@@ -22,7 +22,8 @@ var (
 )
 
 // pingReceived pingTotalTime
-func (p *Ping) httping(ip *net.IPAddr) (int, time.Duration) {
+func (p *Ping) httping(ip *net.IPAddr) (int, time.Duration, string) {
+	var colo string
 	hc := http.Client{
 		Timeout: time.Second * 2,
 		Transport: &http.Transport{
@@ -38,12 +39,12 @@ func (p *Ping) httping(ip *net.IPAddr) (int, time.Duration) {
 	{
 		requ, err := http.NewRequest(http.MethodHead, URL, nil)
 		if err != nil {
-			return 0, 0
+			return 0, 0, colo
 		}
 		requ.Header.Set("User-Agent", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/98.0.4758.80 Safari/537.36")
 		resp, err := hc.Do(requ)
 		if err != nil {
-			return 0, 0
+			return 0, 0, colo
 		}
 		defer resp.Body.Close()
 
@@ -51,11 +52,11 @@ func (p *Ping) httping(ip *net.IPAddr) (int, time.Duration) {
 		// 如果未指定的 HTTP 状态码，或指定的状态码不合规，则默认只认为 200、301、302 才算 HTTPing 通过
 		if HttpingStatusCode == 0 || HttpingStatusCode < 100 && HttpingStatusCode > 599 {
 			if resp.StatusCode != 200 && resp.StatusCode != 301 && resp.StatusCode != 302 {
-				return 0, 0
+				return 0, 0, colo
 			}
 		} else {
 			if resp.StatusCode != HttpingStatusCode {
-				return 0, 0
+				return 0, 0, colo
 			}
 		}
 
@@ -70,9 +71,9 @@ func (p *Ping) httping(ip *net.IPAddr) (int, time.Duration) {
 				}
 				return resp.Header.Get("x-amz-cf-pop") // 示例 X-Amz-Cf-Pop: SIN52-P1
 			}()
-			colo := p.getColo(cfRay)
+			colo = p.getColo(cfRay)
 			if colo == "" { // 没有匹配到三字码或不符合指定地区则直接结束该 IP 测试
-				return 0, 0
+				return 0, 0, colo
 			}
 		}
 
@@ -85,7 +86,7 @@ func (p *Ping) httping(ip *net.IPAddr) (int, time.Duration) {
 		requ, err := http.NewRequest(http.MethodHead, URL, nil)
 		if err != nil {
 			log.Fatal("意外的错误，情报告：", err)
-			return 0, 0
+			return 0, 0, colo
 		}
 		requ.Header.Set("User-Agent", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/98.0.4758.80 Safari/537.36")
 		if i == PingTimes-1 {
@@ -103,8 +104,7 @@ func (p *Ping) httping(ip *net.IPAddr) (int, time.Duration) {
 		delay += duration
 
 	}
-
-	return success, delay
+	return success, delay, colo
 
 }
 
