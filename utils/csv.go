@@ -24,7 +24,7 @@ var (
 	InputMaxLossRate = maxLossRate
 	Output           = defaultOutput
 	PrintNum         = 10
-	TxtOutput        = "result.txt"
+	coloLimit		 = 10
 )
 
 // 是否打印测试结果
@@ -76,26 +76,49 @@ func ExportCsv(data []CloudflareIPData) {
 	if noOutput() || len(data) == 0 {
 		return
 	}
+
+	// 按照 Colo 分组
+	colos := make(map[string][]CloudflareIPData)
+	for _, v := range data {
+		colos[v.Colo] = append(colos[v.Colo], v)
+	}
+
+	// 只保留每个 Colo 的前 coloLimit 个 IP
+	var limitedData []CloudflareIPData
+	for _, ipDataList := range colos {
+		// 取每个 colo 的前 coloLimit 个 IP
+		count := 0
+		for _, ipData := range ipDataList {
+			if count >= coloLimit {
+				break
+			}
+			limitedData = append(limitedData, ipData)
+			count++
+		}
+	}
+
+	// 导出到 CSV
 	fp, err := os.Create(Output)
 	if err != nil {
 		log.Fatalf("创建文件[%s]失败：%v", Output, err)
 		return
 	}
 	defer fp.Close()
-	w := csv.NewWriter(fp) //创建一个新的写入文件流
+	w := csv.NewWriter(fp) // 创建一个新的写入文件流
 	_ = w.Write([]string{"IP 地址", "已发送", "已接收", "丢包率", "平均延迟", "下载速度 (MB/s)", "数据中心"})
-	_ = w.WriteAll(convertToString(data))
+	_ = w.WriteAll(convertToString(limitedData))
 	w.Flush()
 
-	TxtOutput = strings.TrimSuffix(Output, ".csv") + ".txt"
+	// 导出到 TXT
+	TxtOutput := strings.TrimSuffix(Output, ".csv") + ".txt"
 	txtfp, err := os.Create(TxtOutput)
 	if err != nil {
 		log.Fatalf("创建文件[%s]失败：%v", TxtOutput, err)
 		return
 	}
 	defer txtfp.Close()
-	txtw := csv.NewWriter(txtfp) //创建一个新的写入文件流
-	_ = txtw.WriteAll(convertToStringOnlyIp(data))
+	txtw := csv.NewWriter(txtfp) // 创建一个新的写入文件流
+	_ = txtw.WriteAll(convertToStringOnlyIp(limitedData))
 	txtw.Flush()
 }
 
