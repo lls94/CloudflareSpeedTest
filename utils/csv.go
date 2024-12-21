@@ -24,7 +24,7 @@ var (
 	InputMaxLossRate = maxLossRate
 	Output           = defaultOutput
 	PrintNum         = 10
-	coloLimit		 = 10
+	coloLimit		 = 15
 )
 
 // 是否打印测试结果
