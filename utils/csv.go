@@ -126,7 +126,7 @@ func convertToStringOnlyIp(data []CloudflareIPData) [][]string {
     result := make([][]string, 0)
     for _, v := range data {
         // 拼接 IP 和 Colo 字段
-        result = append(result, []string{v.IP.String() + "#" + v.Colo})
+        result = append(result, []string{v.IP.String() + "#💻" + v.Colo})
     }
     return result
 }
