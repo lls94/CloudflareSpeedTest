@@ -8,10 +8,11 @@ import (
 	"os"
 	"strconv"
 	"time"
+	"strings"
 )
 
 const (
-	defaultOutput         = "result.csv"
+	defaultOutput         = "./dist/result.csv"
 	maxDelay              = 9999 * time.Millisecond
 	minDelay              = 0 * time.Millisecond
 	maxLossRate   float32 = 1.0
@@ -23,6 +24,7 @@ var (
 	InputMaxLossRate = maxLossRate
 	Output           = defaultOutput
 	PrintNum         = 10
+	TxtOutput        = "result.txt"
 )
 
 // 是否打印测试结果
@@ -84,6 +86,26 @@ func ExportCsv(data []CloudflareIPData) {
 	_ = w.Write([]string{"IP 地址", "已发送", "已接收", "丢包率", "平均延迟", "下载速度 (MB/s)", "数据中心"})
 	_ = w.WriteAll(convertToString(data))
 	w.Flush()
+
+	TxtOutput = strings.TrimSuffix(Output, ".csv") + ".txt"
+	txtfp, err := os.Create(TxtOutput)
+	if err != nil {
+		log.Fatalf("创建文件[%s]失败：%v", TxtOutput, err)
+		return
+	}
+	defer txtfp.Close()
+	txtw := csv.NewWriter(txtfp) //创建一个新的写入文件流
+	_ = txtw.WriteAll(convertToStringOnlyIp(data))
+	txtw.Flush()
+}
+
+func convertToStringOnlyIp(data []CloudflareIPData) [][]string {
+    result := make([][]string, 0)
+    for _, v := range data {
+        // 拼接 IP 和 Colo 字段
+        result = append(result, []string{v.IP.String() + "#" + v.Colo})
+    }
+    return result
 }
 
 func convertToString(data []CloudflareIPData) [][]string {
