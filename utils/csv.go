@@ -75,6 +75,7 @@ func (cf *CloudflareIPData) toString() []string {
 // coloMap 机场名称映射
 func (cf *CloudflareIPData) toAirport() string {
 	airportMap := map[string]string{
+		"YUL": "蒙特利尔",
 		"LAX": "洛杉矶",
 		"PEK": "北京首都",
 		"HKG": "香港",
@@ -171,7 +172,7 @@ func convertToStringOnlyIp(data []CloudflareIPData) [][]string {
 	result := make([][]string, 0)
 	for _, v := range data {
 		// 拼接 IP 和 Colo 字段
-		result = append(result, []string{v.toString()[0] + "#👍" + v.toAirport()})
+		result = append(result, []string{v.IP.String() + "#👍" + v.toAirport()})
 	}
 	return result
 }
