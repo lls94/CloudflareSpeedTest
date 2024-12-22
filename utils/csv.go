@@ -68,7 +68,49 @@ func (cf *CloudflareIPData) toString() []string {
 	result[3] = strconv.FormatFloat(float64(cf.getLossRate()), 'f', 2, 32)
 	result[4] = strconv.FormatFloat(cf.Delay.Seconds()*1000, 'f', 2, 32)
 	result[5] = strconv.FormatFloat(cf.DownloadSpeed/1024/1024, 'f', 2, 32)
-	result[6] = cf.Colo
+
+	// 创建一个 map 来映射机场三字码到中文
+	airportMap := map[string]string{
+		"LAX": "洛杉矶",
+		"PEK": "北京首都",
+		"HKG": "香港",
+		"JFK": "纽约",
+		"CDG": "巴黎",
+		"LHR": "伦敦",
+		"SIN": "新加坡",
+		"FRA": "法兰克福",
+		"DXB": "迪拜",
+		"SYD": "悉尼",
+		"AMS": "阿姆斯特丹",
+		"KIX": "大阪",
+		"ICN": "首尔",
+		"BKK": "曼谷",
+		"IST": "伊斯坦",
+		"SEA": "西雅图",
+		"MUC": "慕尼黑",
+		"ZRH": "苏黎世",
+		"MAD": "马德里",
+		"SFO": "旧金山",
+		"YVR": "温哥华",
+		"BOM": "孟买",
+		"DEL": "新德里",
+		"PVG": "上海",
+		"TPE": "台北",
+		"YYZ": "多伦多",
+		"CGK": "雅加达",
+		"AKL": "奥克兰",
+		"KUL": "吉隆坡",
+		"CPT": "开普敦",
+		"PEM": "普吉岛",
+	}
+
+	// 将 cf.Colo 转换为中文机场名称
+	if airport, exists := airportMap[cf.Colo]; exists {
+		result[6] = airport
+	} else {
+		result[6] = cf.Colo // 如果没有找到对应的映射，则保留原值
+	}
+
 	return result
 }
 
