@@ -73,7 +73,8 @@ func (p *Ping) httping(ip *net.IPAddr) (int, time.Duration, string) {
 			}()
 			colo = p.getColo(cfRay)
 			if colo == "" { // 没有匹配到三字码或不符合指定地区则直接结束该 IP 测试
-				return 0, 0, "colo?"
+				// return 0, 0, colo
+				colo = "❓"
 			}
 		}
 
