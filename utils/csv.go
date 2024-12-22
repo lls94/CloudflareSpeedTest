@@ -114,8 +114,6 @@ func (cf *CloudflareIPData) toString() []string {
 	} else {
 		result[6] = cf.Colo // 如果没有找到对应的映射，则保留原值
 	}
-
-	print("The value is:", result[6])
 	return result
 }
 
