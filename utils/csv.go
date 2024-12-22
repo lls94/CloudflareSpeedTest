@@ -68,8 +68,12 @@ func (cf *CloudflareIPData) toString() []string {
 	result[3] = strconv.FormatFloat(float64(cf.getLossRate()), 'f', 2, 32)
 	result[4] = strconv.FormatFloat(cf.Delay.Seconds()*1000, 'f', 2, 32)
 	result[5] = strconv.FormatFloat(cf.DownloadSpeed/1024/1024, 'f', 2, 32)
+	result[6] = cf.Colo
+	return result
+}
 
-	// 创建一个 map 来映射机场三字码到中文
+// coloMap 机场名称映射
+func (cf *CloudflareIPData) toAirport() string {
 	airportMap := map[string]string{
 		"LAX": "洛杉矶",
 		"PEK": "北京首都",
@@ -107,14 +111,10 @@ func (cf *CloudflareIPData) toString() []string {
 		"CPT": "开普敦",
 		"PEM": "普吉岛",
 	}
-
-	// 将 cf.Colo 转换为中文机场名称
 	if airport, exists := airportMap[cf.Colo]; exists {
-		result[6] = airport
-	} else {
-		result[6] = cf.Colo // 如果没有找到对应的映射，则保留原值
+		return airport
 	}
-	return result
+	return cf.Colo
 }
 
 func ExportCsv(data []CloudflareIPData) {
@@ -171,7 +171,7 @@ func convertToStringOnlyIp(data []CloudflareIPData) [][]string {
 	result := make([][]string, 0)
 	for _, v := range data {
 		// 拼接 IP 和 Colo 字段
-		result = append(result, []string{v.toString()[0] + "#自选" + v.toString()[6]})
+		result = append(result, []string{v.toString()[0] + "#👍" + v.toAirport()})
 	}
 	return result
 }

@@ -4,5 +4,5 @@ chcp 65001
 go run main.go -p 0 -tll 40 -tl 360 -httping -cfcolo * -dd
 git add .
 git commit -m "自动提交生成的代码"
-git push
+@REM git push
 exit
