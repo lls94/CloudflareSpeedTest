@@ -74,6 +74,10 @@ func (cf *CloudflareIPData) toString() []string {
 		"LAX": "洛杉矶",
 		"PEK": "北京首都",
 		"HKG": "香港",
+		"SJC": "圣何塞市",
+		"IAD": "华盛顿",
+		"NRT": "东京",
+		"ORD": "芝加哥",
 		"JFK": "纽约",
 		"CDG": "巴黎",
 		"LHR": "伦敦",
@@ -111,6 +115,7 @@ func (cf *CloudflareIPData) toString() []string {
 		result[6] = cf.Colo // 如果没有找到对应的映射，则保留原值
 	}
 
+	print("The value is:", result[6])
 	return result
 }
 
@@ -168,7 +173,7 @@ func convertToStringOnlyIp(data []CloudflareIPData) [][]string {
 	result := make([][]string, 0)
 	for _, v := range data {
 		// 拼接 IP 和 Colo 字段
-		result = append(result, []string{v.IP.String() + "#自选" + v.Colo})
+		result = append(result, []string{v.toString()[0] + "#自选" + v.toString()[6]})
 	}
 	return result
 }
